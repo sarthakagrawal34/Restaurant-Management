@@ -19,7 +19,7 @@ func main() {
 		port = "8000"
 	}
 
-	// define a new engine 
+	// define a new engine
 	router := gin.New()
 	// Add logger library for rich logs
 	router.Use(gin.Logger())
@@ -30,7 +30,7 @@ func main() {
 
 	routes.FoodRoutes(router)
 	routes.MenuRoutes(router)
-	routes.RestaurantTableRoutes(router)
+	routes.TableRoutes(router)
 	routes.OrderRoutes(router)
 	routes.OrderItemRoutes(router)
 	routes.InvoiceRoutes(router)

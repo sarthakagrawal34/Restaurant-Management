@@ -2,25 +2,25 @@ package controllers
 
 import "github.com/gin-gonic/gin"
 
-func GetAllFoods() gin.HandlerFunc {
+func GetAllOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 	}
 }
 
-func GetFood() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		
-	}
-}
-
-func CreateFood() gin.HandlerFunc {
+func GetOrder() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		
 	}
 }
 
-func UpdateFood() gin.HandlerFunc {
+func CreateOrder() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		
+	}
+}
+
+func UpdateOrder() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		
 	}

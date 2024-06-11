@@ -26,7 +26,7 @@ func main() {
 	// use user routes for login and signup
 	routes.UserRoutes(router)
 	// pass the routes through middleware for authentication
-	router.Use(middleware.Authentication())
+	router.Use(middleware.Authenticate())
 
 	routes.FoodRoutes(router)
 	routes.MenuRoutes(router)

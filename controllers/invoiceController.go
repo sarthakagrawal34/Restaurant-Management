@@ -52,7 +52,7 @@ func GetInvoice() gin.HandlerFunc {
 		}
 
 		var invoiceView models.InvoiceViewFormat
-		allOrderItems, err := helpers.ItemsByOrder(*invoice.OrderId)
+		allOrderItems, err := helpers.ItemsByOrder(ctx, *invoice.OrderId)
 		if err != nil {
 			fmt.Println("error in GetInvoice function in finding all order item details, err: ", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching invoice order items details"})

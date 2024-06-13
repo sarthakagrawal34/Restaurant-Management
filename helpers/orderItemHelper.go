@@ -9,14 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func ItemsByOrder(id string) (OrderItems []primitive.M, err error) {
+func ItemsByOrder(ctx context.Context, id string) (OrderItems []primitive.M, err error) {
 	return nil, nil
 }
 
-func OrderItemOrderCreator(order models.Order) (string, error) {
-	var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func OrderItemOrderCreator(ctx context.Context,order models.Order) (string, error) {
 	order.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	order.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	order.ID = primitive.NewObjectID()

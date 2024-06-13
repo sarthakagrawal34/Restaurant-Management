@@ -20,8 +20,8 @@ func GetAllOrders() gin.HandlerFunc {
 
 		result, err := models.OrderCollection.Find(ctx, bson.M{})
 		if err != nil {
-			fmt.Println("error in GetAllOrders function while finding order items, err: ", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing order items"})
+			fmt.Println("error in GetAllOrders function while finding all orders, err: ", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing all order"})
 			return
 		}
 

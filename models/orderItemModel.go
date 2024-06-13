@@ -1,9 +1,11 @@
 package models
 
 import (
+	"restaurant-management/database"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type OrderItem struct {
@@ -17,3 +19,10 @@ type OrderItem struct {
 	CreatedAt   time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt   time.Time          `json:"updated_at" bson:"updated_at"`
 }
+
+type OrderItemPack struct {
+	TableId    *string
+	OrderItems []OrderItem
+}
+
+var OrderItemCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "order_item")

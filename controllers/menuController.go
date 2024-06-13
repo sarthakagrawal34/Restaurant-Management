@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"restaurant-management/database"
 	"restaurant-management/models"
 	"restaurant-management/utils"
 	"time"
@@ -12,18 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-var menuCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "menu")
 
 func GetAllMenus() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		result, err := menuCollection.Find(ctx, bson.M{})
+		result, err := models.MenuCollection.Find(ctx, bson.M{})
 		if err != nil {
 			fmt.Println("error in GetAllMenus function while finding menu items, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing menu items"})
@@ -48,7 +44,7 @@ func GetMenu() gin.HandlerFunc {
 		menuId := c.Param("menu_id")
 		var menu models.Menu
 
-		err := menuCollection.FindOne(ctx, bson.M{"menu_id": menuId}).Decode(&menu)
+		err := models.MenuCollection.FindOne(ctx, bson.M{"menu_id": menuId}).Decode(&menu)
 		if err != nil {
 			fmt.Println("error in GetMenu function in finding menu, err: ", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching menu details"})
@@ -91,7 +87,7 @@ func CreateMenu() gin.HandlerFunc {
 		menu.ID = primitive.NewObjectID()
 		menu.MenuId = menu.ID.Hex()
 
-		res, err := menuCollection.InsertOne(ctx, menu)
+		res, err := models.MenuCollection.InsertOne(ctx, menu)
 		if err != nil {
 			fmt.Println("error in CreateMenu function while creating menu, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error in creating menu"})
@@ -150,7 +146,7 @@ func UpdateMenu() gin.HandlerFunc {
 				Upsert: &upsert,
 			}
 
-			res, err := menuCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
+			res, err := models.MenuCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 			if err != nil {
 				fmt.Println("error in UpdateMenu function while updating menu, err: ", err.Error())
 				c.JSON(http.StatusBadRequest, gin.H{"error": "error occured while updating menu"})

@@ -1,9 +1,11 @@
 package models
 
 import (
+	"restaurant-management/database"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Menu struct {
@@ -16,3 +18,5 @@ type Menu struct {
 	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at" bson:"updated_at"`
 }
+
+var MenuCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "menu")

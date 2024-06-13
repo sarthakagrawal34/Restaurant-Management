@@ -3,7 +3,6 @@ package helpers
 import (
 	"context"
 	"fmt"
-	"restaurant-management/controllers"
 	"restaurant-management/models"
 	"time"
 
@@ -23,7 +22,7 @@ func OrderItemOrderCreator(order models.Order) (string, error) {
 	order.ID = primitive.NewObjectID()
 	order.OrderId = order.ID.Hex()
 
-	_, err := controllers.OrderCollection.InsertOne(ctx, order)
+	_, err := models.OrderCollection.InsertOne(ctx, order)
 	if err != nil {
 		fmt.Println("error in CreateOrder function while creating order, err: ", err)
 		return "", err

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"restaurant-management/database"
 	"restaurant-management/models"
 	"restaurant-management/utils"
 	"strconv"
@@ -18,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var foodCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "food")
 var validate = validator.New()
 
 func GetAllFoods() gin.HandlerFunc {
@@ -53,7 +51,7 @@ func GetAllFoods() gin.HandlerFunc {
 			}},
 		}
 
-		result, err := foodCollection.Aggregate(ctx, mongo.Pipeline{
+		result, err := models.FoodCollection.Aggregate(ctx, mongo.Pipeline{
 			matchStage, groupStage, projectStage,
 		})
 		if err != nil {
@@ -79,7 +77,7 @@ func GetFood() gin.HandlerFunc {
 
 		foodId := c.Param("food_id")
 		var food models.Food
-		err := foodCollection.FindOne(ctx, bson.M{"food_id": foodId}).Decode(&food)
+		err := models.FoodCollection.FindOne(ctx, bson.M{"food_id": foodId}).Decode(&food)
 		if err != nil {
 			fmt.Println("error in GetFood function in finding food, err: ", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching food details"})
@@ -109,7 +107,7 @@ func CreateFood() gin.HandlerFunc {
 		}
 
 		var menu models.Menu
-		err := menuCollection.FindOne(ctx, bson.M{"menu_id": food.MenuId}).Decode(&menu)
+		err := models.MenuCollection.FindOne(ctx, bson.M{"menu_id": food.MenuId}).Decode(&menu)
 		if err != nil {
 			fmt.Println("error in CreateFood function while finding linked menu, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "menu not found"})
@@ -123,7 +121,7 @@ func CreateFood() gin.HandlerFunc {
 		var num = utils.ToFixed(*food.Price, 2)
 		food.Price = &num
 
-		res, err := foodCollection.InsertOne(ctx, food)
+		res, err := models.FoodCollection.InsertOne(ctx, food)
 		if err != nil {
 			fmt.Println("error in CreateFood function while creating food, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error in creating food"})
@@ -166,7 +164,7 @@ func UpdateFood() gin.HandlerFunc {
 		}
 		if food.MenuId != nil {
 			var menu models.Menu
-			err := menuCollection.FindOne(ctx, bson.M{"menu_id": food.MenuId}).Decode(&menu)
+			err := models.MenuCollection.FindOne(ctx, bson.M{"menu_id": food.MenuId}).Decode(&menu)
 			if err != nil {
 				fmt.Println("error in UpdateFood function while finding linked menu, err: ", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "menu not found"})
@@ -185,7 +183,7 @@ func UpdateFood() gin.HandlerFunc {
 
 		foodId := c.Param("food_id")
 		filter := bson.M{"food_id": foodId}
-		res, err := foodCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
+		res, err := models.FoodCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 		if err != nil {
 			fmt.Println("error in UpdateFood function while updating food, err: ", err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error occured while updating food"})

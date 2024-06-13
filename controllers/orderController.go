@@ -4,25 +4,21 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"restaurant-management/database"
 	"restaurant-management/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-var OrderCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "order")
 
 func GetAllOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		result, err := OrderCollection.Find(ctx, bson.M{})
+		result, err := models.OrderCollection.Find(ctx, bson.M{})
 		if err != nil {
 			fmt.Println("error in GetAllOrders function while finding order items, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing order items"})
@@ -46,7 +42,7 @@ func GetOrder() gin.HandlerFunc {
 
 		orderId := c.Param("order_id")
 		var order models.Order
-		err := OrderCollection.FindOne(ctx, bson.M{"order_id": orderId}).Decode(&order)
+		err := models.OrderCollection.FindOne(ctx, bson.M{"order_id": orderId}).Decode(&order)
 		if err != nil {
 			fmt.Println("error in GetOrder function in finding order, err: ", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching order details"})
@@ -76,7 +72,7 @@ func CreateOrder() gin.HandlerFunc {
 		}
 
 		var table models.RestaurantTable
-		err := restaurantTableCollection.FindOne(ctx, bson.M{"table_id": order.TableId}).Decode(&table)
+		err := models.RestaurantTableCollection.FindOne(ctx, bson.M{"table_id": order.TableId}).Decode(&table)
 		if err != nil {
 			fmt.Println("error in CreateOrder function while finding linked restaturant table, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "restaturant table not found"})
@@ -88,7 +84,7 @@ func CreateOrder() gin.HandlerFunc {
 		order.ID = primitive.NewObjectID()
 		order.OrderId = order.ID.Hex()
 
-		res, err := OrderCollection.InsertOne(ctx, order)
+		res, err := models.OrderCollection.InsertOne(ctx, order)
 		if err != nil {
 			fmt.Println("error in CreateOrder function while creating order, err: ", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error in creating order"})
@@ -123,7 +119,7 @@ func UpdateOrder() gin.HandlerFunc {
 
 		if order.TableId != nil {
 			var table models.RestaurantTable
-			err := restaurantTableCollection.FindOne(ctx, bson.M{"table_id": order.TableId}).Decode(&table)
+			err := models.RestaurantTableCollection.FindOne(ctx, bson.M{"table_id": order.TableId}).Decode(&table)
 			if err != nil {
 				fmt.Println("error in UpdateOrder function while finding linked table, err: ", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "table not found"})
@@ -142,7 +138,7 @@ func UpdateOrder() gin.HandlerFunc {
 
 		orderId := c.Param("order_id")
 		filter := bson.M{"order_id": orderId}
-		res, err := OrderCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
+		res, err := models.OrderCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 		if err != nil {
 			fmt.Println("error in UpdateOrder function while updating order, err: ", err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error occured while updating order"})
@@ -151,4 +147,3 @@ func UpdateOrder() gin.HandlerFunc {
 		c.JSON(http.StatusOK, res)
 	}
 }
-

@@ -10,7 +10,7 @@ import (
 
 type RestaurantTable struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
-	TableId        string             `json:"table_id" bson:"table_id" validate:"required"`
+	TableId        string             `json:"table_id" bson:"table_id"`
 	NumberOfGuests *int               `json:"number_of_guests" bson:"number_of_guests" validate:"required"`
 	TableNumber    *int               `json:"table_number" bson:"table_number" validate:"required"`
 	CreatedAt      time.Time          `json:"created_at" bson:"created_at"`

@@ -43,14 +43,14 @@ func GetOrderItem() gin.HandlerFunc {
 		defer cancel()
 
 		orderItemId := c.Param("order_item_id")
-		var order models.Order
-		err := models.OrderItemCollection.FindOne(ctx, bson.M{"order_item_id": orderItemId}).Decode(&order)
+		var order_item models.OrderItem
+		err := models.OrderItemCollection.FindOne(ctx, bson.M{"order_item_id": orderItemId}).Decode(&order_item)
 		if err != nil {
 			fmt.Println("error in GetOrderItem function in finding order item, err: ", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching order item details"})
 			return
 		}
-		c.JSON(http.StatusOK, order)
+		c.JSON(http.StatusOK, order_item)
 	}
 }
 

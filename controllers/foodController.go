@@ -157,10 +157,10 @@ func UpdateFood() gin.HandlerFunc {
 			updateObj = append(updateObj, bson.E{Key: "name", Value: food.Name})
 		}
 		if food.Price != nil {
-			updateObj = append(updateObj, bson.E{Key: "category", Value: food.Price})
+			updateObj = append(updateObj, bson.E{Key: "price", Value: food.Price})
 		}
 		if food.FoodImage != nil {
-			updateObj = append(updateObj, bson.E{Key: "category", Value: food.FoodImage})
+			updateObj = append(updateObj, bson.E{Key: "food_image", Value: food.FoodImage})
 		}
 		if food.MenuId != nil {
 			var menu models.Menu
@@ -186,7 +186,7 @@ func UpdateFood() gin.HandlerFunc {
 		res, err := models.FoodCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 		if err != nil {
 			fmt.Println("error in UpdateFood function while updating food, err: ", err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"error": "error occured while updating food"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while updating food"})
 			return
 		}
 		c.JSON(http.StatusOK, res)

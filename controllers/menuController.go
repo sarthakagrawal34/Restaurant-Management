@@ -149,7 +149,7 @@ func UpdateMenu() gin.HandlerFunc {
 			res, err := models.MenuCollection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateObj}}, &opt)
 			if err != nil {
 				fmt.Println("error in UpdateMenu function while updating menu, err: ", err.Error())
-				c.JSON(http.StatusBadRequest, gin.H{"error": "error occured while updating menu"})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while updating menu"})
 				return
 			}
 			c.JSON(http.StatusOK, res)
